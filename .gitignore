@@ -1,0 +1,20 @@
+# Config with secrets
+config.env
+
+# Custom prompts
+prompt.txt
+
+# Logs
+*.log
+logs/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

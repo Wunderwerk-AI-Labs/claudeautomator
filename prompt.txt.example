@@ -1,0 +1,16 @@
+Review this codebase and make one meaningful improvement. Focus on:
+
+1. Bug fixes (highest priority)
+2. Performance optimizations
+3. Security improvements
+4. Code quality and readability
+5. Adding missing error handling
+
+Rules:
+- Make exactly ONE focused change per iteration
+- Ensure changes don't break existing functionality
+- Write clean, maintainable code
+- Add tests if appropriate
+- Commit your changes with a descriptive message
+
+After making your change, briefly summarize what you did and why.
