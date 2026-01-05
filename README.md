@@ -1,11 +1,12 @@
 # ClaudeAutomator
 
-Automatically run Claude Code iteratively on your codebase with intelligent rate limit handling. When your account hits usage limits, ClaudeAutomator waits for the embargo period to elapse and then resumes.
+Automatically run Claude Code iteratively on your codebase using only your **free quota** (no paid credits). When your quota is depleted, ClaudeAutomator waits for the embargo period to elapse and then resumes.
 
 ## Features
 
+- **Free quota only**: Uses `--max-cost 0` by default to avoid spending credits
 - **Iterative improvements**: Run Claude Code repeatedly to incrementally improve your codebase
-- **Smart rate limit detection**: Automatically detects when credits are depleted
+- **Smart rate limit detection**: Automatically detects when quota is depleted
 - **Auto-resume**: Parses wait times from Claude output and resumes after the embargo period
 - **Configurable**: Supports config files, command-line args, and environment variables
 - **Logging**: Full logging of all iterations and wait periods
@@ -70,6 +71,7 @@ chmod +x claudeautomator.sh
 | `-w, --wait-minutes N` | Default wait time when rate limited (default: 60) |
 | `-m, --model MODEL` | Claude model to use |
 | `-l, --log FILE` | Log file path (default: ./claudeautomator.log) |
+| `--use-credits` | Allow using paid credits (default: free quota only) |
 | `-h, --help` | Show help message |
 
 ## Running as a Background Service

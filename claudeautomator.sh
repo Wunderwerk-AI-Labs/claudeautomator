@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ClaudeAutomator - Run Claude Code iteratively until credits depleted, then wait and resume
+# ClaudeAutomator - Run Claude Code iteratively using free quota only, pause when depleted
 # Usage: ./claudeautomator.sh [options]
 
 set -e
@@ -13,6 +13,7 @@ MAX_ITERATIONS="${MAX_ITERATIONS:-0}"  # 0 = unlimited
 LOG_FILE="${LOG_FILE:-./claudeautomator.log}"
 DEFAULT_WAIT_MINUTES="${DEFAULT_WAIT_MINUTES:-60}"
 CLAUDE_MODEL="${CLAUDE_MODEL:-}"  # Empty = use default
+USE_CREDITS="${USE_CREDITS:-false}"  # Set to true to allow using paid credits
 
 # Colors for output
 RED='\033[0;31m'
@@ -57,6 +58,10 @@ while [[ $# -gt 0 ]]; do
             LOG_FILE="$2"
             shift 2
             ;;
+        --use-credits)
+            USE_CREDITS="true"
+            shift
+            ;;
         -h|--help)
             echo "ClaudeAutomator - Run Claude Code iteratively with rate limit handling"
             echo ""
@@ -70,11 +75,12 @@ while [[ $# -gt 0 ]]; do
             echo "  -w, --wait-minutes N    Default wait time when rate limited (default: 60)"
             echo "  -m, --model MODEL       Claude model to use (optional)"
             echo "  -l, --log FILE          Log file path (default: ./claudeautomator.log)"
+            echo "  --use-credits           Allow using paid credits (default: quota only)"
             echo "  -h, --help              Show this help message"
             echo ""
             echo "Environment variables / config.env:"
             echo "  PROMPT, PROMPT_FILE, TARGET_DIR, MAX_ITERATIONS,"
-            echo "  DEFAULT_WAIT_MINUTES, CLAUDE_MODEL, LOG_FILE"
+            echo "  DEFAULT_WAIT_MINUTES, CLAUDE_MODEL, LOG_FILE, USE_CREDITS"
             exit 0
             ;;
         *)
@@ -154,6 +160,11 @@ run_claude() {
     # Build claude command
     local cmd="claude --dangerously-skip-permissions"
 
+    # Use --max-cost 0 to only use free quota (not paid credits)
+    if [[ "$USE_CREDITS" != "true" ]]; then
+        cmd="$cmd --max-cost 0"
+    fi
+
     if [[ -n "$CLAUDE_MODEL" ]]; then
         cmd="$cmd --model $CLAUDE_MODEL"
     fi
@@ -180,6 +191,11 @@ main() {
     log "${GREEN}=== ClaudeAutomator Started ===${NC}"
     log "Target directory: $TARGET_DIR"
     log "Max iterations: ${MAX_ITERATIONS:-unlimited}"
+    if [[ "$USE_CREDITS" == "true" ]]; then
+        log "Mode: Using paid credits"
+    else
+        log "Mode: Free quota only (--max-cost 0)"
+    fi
 
     # Get prompt
     if [[ -z "$PROMPT" ]]; then
